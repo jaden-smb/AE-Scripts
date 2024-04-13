@@ -1,25 +1,56 @@
-# ExtendScript for Adobe After Effects: Create V Shape with Rectangles
+# How to run the scripts?
 
-This script creates a V shape using two rectangles in an active composition in Adobe After Effects.
+1. Open After Effects and ensure that a composition is active.
+2. Run the script, either by adding it to a script menu or by copying and pasting it into the After Effects script editor.
+3. The script will automatically create the V-shaped composition within the active composition.
 
-## Functions
 
-### `createVShapeWithRectangles()`
+# createShape.jsx
 
-This is the main function that creates the V shape. It first gets the active composition using `getActiveComposition()`. If no composition is selected, it alerts the user and exits. It then creates a white background layer. Two rectangles are created with different rotations to form a V shape. These rectangles are then animated to move from the top to the center of the composition.
+This script is designed to create a V-shaped composition in After Effects using two animated rectangular layers.
 
-### `getActiveComposition()`
+## How it works:
 
-This function returns the currently active composition in Adobe After Effects. If no composition is active or the active item is not a composition, it returns null.
+- Checks if a composition is active and if so, creates the V-shaped composition within it.
+- Creates a background layer with a white solid.
+- Adds two rectangular layers, one on the left side and one on the right side, and animates them to form a V-shape.
 
-### `createRectangle(comp, name, rotation, size, color)`
+## Code Explanation
 
-This function creates a rectangle shape layer in the given composition (`comp`). The rectangle is named (`name`), rotated (`rotation`), and sized (`size`). The color of the rectangle is set using the `color` parameter.
+1. The script first checks if a composition is active and if so, retrieves a reference to it using the `getActiveComposition` function.
+2. The `createVShapeWithRectangles` function is then called, which is responsible for creating the V-shaped composition.
+3. Inside the `createVShapeWithRectangles` function:
+   - A background layer is created with a white solid.
+   - Two rectangular layers are created using the `createRectangle` function, one on the left side and one on the right side.
+   - The `animateRectangle` function is used to animate the position of the two rectangular layers, creating the V-shape.
+4. The `createRectangle` function is responsible for creating a rectangular shape layer with the given properties (name, rotation, size, and color) and returning the layer.
+5. The `animateRectangle` function sets the position animation of the given layer, moving it from the start position to the end position over the specified duration.
 
-### `animateRectangle(layer, duration, startPosition, endPosition)`
+Overall, this script provides a simple and efficient way to create a V-shaped composition in After Effects using rectangular layers and animation.
 
-This function animates a given layer (`layer`) over a specified duration (`duration`). The animation changes the position of the layer from `startPosition` to `endPosition`.
 
-## Execution
+# createNewCompBasedPrevious.jsx
 
-The script ends with a call to `createVShapeWithRectangles()`, which kicks off the process of creating and animating the V shape.
+This script is designed to create a new composition from the active composition in After Effects, allowing the user to select which layers to include in the new composition.
+
+## Features
+
+- Checks if a composition is active and if it has any layers.
+- Creates a dialog window with the following elements:
+  - A field to enter the name of the new composition.
+  - Checkboxes for each layer in the active composition, allowing the user to select which layers to include in the new composition.
+  - A progress bar to show the status of the layer copying process.
+  - OK and Cancel buttons.
+- When the OK button is clicked, the script checks if a composition with the same name already exists, and if not, creates a new composition with the selected layers.
+- The new composition is then opened in the viewer.
+- The Cancel button simply closes the dialog window.
+
+## Code Explanation
+
+1. The script first checks if a composition is active and if it has any layers. If not, it displays an alert message and returns.
+2. It then creates a new dialog window and adds various UI elements to it, such as a name field, layer checkboxes, a progress bar, and buttons.
+3. The `setOkButtonAction` function sets the action for the "OK" button, which checks if a composition with the same name already exists, and if not, creates a new composition with the selected layers.
+4. The `setCancelButtonAction` function sets the action for the "Cancel" button, which simply closes the dialog window.
+5. The script uses several helper functions to create and manage the various UI elements, such as `getActiveComposition`, `createDialogWindow`, `addNameField`, `addLayerCheckboxes`, `addGroup`, `addProgressBar`, and `addButtons`.
+
+Overall, this script provides a simple and efficient way to create a new composition from the active composition in After Effects, allowing the user to selectively include layers in the new composition.
