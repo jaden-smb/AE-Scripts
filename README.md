@@ -2,7 +2,7 @@
 
 1. Open After Effects and ensure that a composition is active.
 2. Run the script, either by adding it to a script menu or by copying and pasting it into the After Effects script editor.
-3. The script will automatically create the V-shaped composition within the active composition.
+3. The script will automatically create the neccesary process in the active composition.
 
 
 # createShape.jsx
