@@ -33,18 +33,6 @@ Overall, this script provides a simple and efficient way to create a V-shaped co
 
 This script is designed to create a new composition from the active composition in After Effects, allowing the user to select which layers to include in the new composition.
 
-## Features
-
-- Checks if a composition is active and if it has any layers.
-- Creates a dialog window with the following elements:
-  - A field to enter the name of the new composition.
-  - Checkboxes for each layer in the active composition, allowing the user to select which layers to include in the new composition.
-  - A progress bar to show the status of the layer copying process.
-  - OK and Cancel buttons.
-- When the OK button is clicked, the script checks if a composition with the same name already exists, and if not, creates a new composition with the selected layers.
-- The new composition is then opened in the viewer.
-- The Cancel button simply closes the dialog window.
-
 ## Code Explanation
 
 1. The script first checks if a composition is active and if it has any layers. If not, it displays an alert message and returns.
