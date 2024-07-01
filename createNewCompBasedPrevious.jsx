@@ -1,4 +1,5 @@
 (function() {
+    var selectedImage;
     // Get the active composition
     var comp = getActiveComposition();
     if (!comp) {
@@ -15,12 +16,14 @@
     // Create the dialog window
     var win = createDialogWindow();
     var nameField = addNameField(win);
+    var frameRateField = addFrameRateField(win);
+    var durationField = addDurationField(win);
     var checkboxes = addLayerCheckboxes(win, comp);
     var progressBar = addProgressBar(win, comp);
+    var importButton = addImportButton(win);
     var buttons = addButtons(win);
-
     // Set the action for the OK button
-    setOkButtonAction(buttons.okButton, nameField, checkboxes, progressBar, comp, win);
+    setOkButtonAction(buttons.okButton, nameField, frameRateField, durationField, checkboxes, progressBar, comp, win);
     // Set the action for the Cancel button
     setCancelButtonAction(buttons.cancelButton, win);
 
@@ -42,6 +45,22 @@
         return win;
     }
 
+    function addFrameRateField(win) {
+        var frameRateGroup = win.add("group");
+        frameRateGroup.add("statictext", undefined, "New Composition Frame Rate:");
+        var frameRateField = frameRateGroup.add("edittext", undefined, "24");
+        frameRateField.characters = 5;
+        return frameRateField;
+    }
+
+    function addDurationField(win) {
+        var durationGroup = win.add("group");
+        durationGroup.add("statictext", undefined, "New Composition Duration in Seconds:");
+        var durationField = durationGroup.add("edittext", undefined, "10");
+        durationField.characters = 5;
+        return durationField;
+    }
+
     // Adds a field for the new composition name to the window and returns it
     function addNameField(win) {
         var nameGroup = win.add("group");
@@ -59,6 +78,7 @@
             var checkbox = group.add("checkbox", undefined, "");
             var statictext = group.add("statictext", undefined, comp.layer(i).name);
             statictext.preferredSize.width = 200;
+
             checkboxes.push({
                 checkbox: checkbox,
                 layerIndex: i
@@ -101,15 +121,56 @@
         };
     }
 
+    function addImportButton(win) {
+        var importGroup = win.add("group");
+        importGroup.orientation = "column";
+        importGroup.alignChildren = ["fill", "top"];
+        importGroup.spacing = 10;
+        importGroup.margins = 0;
+
+        var importButton = importGroup.add("button", undefined, "Import Image");
+
+        var positionGroup = importGroup.add("group");
+        positionGroup.add("statictext", undefined, "Position (x, y):");
+        var positionFieldX = positionGroup.add("edittext", undefined, "0");
+        var positionFieldY = positionGroup.add("edittext", undefined, "0");
+        positionFieldX.characters = 5;
+        positionFieldY.characters = 5;
+
+        var sizeGroup = importGroup.add("group");
+        sizeGroup.add("statictext", undefined, "Size (width, height):");
+        var sizeFieldWidth = sizeGroup.add("edittext", undefined, "100");
+        var sizeFieldHeight = sizeGroup.add("edittext", undefined, "100");
+        sizeFieldWidth.characters = 5;
+        sizeFieldHeight.characters = 5;
+
+        importButton.onClick = function() {
+            var positionX = parseFloat(positionFieldX.text);
+            var positionY = parseFloat(positionFieldY.text);
+            var width = parseFloat(sizeFieldWidth.text);
+            var height = parseFloat(sizeFieldHeight.text);
+            selectedFile = dialogImportSelectedImage(positionX, positionY, width, height);
+        }
+
+        return importButton; // Moved inside the function body
+    }
+
+    function dialogImportSelectedImage(positionX, positionY, width, height) {
+        var file = File.openDialog("Select an image file", "Images: *.jpg;*.jpeg;*.png;*.svg;*.gif;*.bmp;*.tiff;*.ico;*.jfif;*.webp");
+        return file;
+    }
+
     // Sets the action for the OK button
-    function setOkButtonAction(okButton, nameField, checkboxes, progressBar, comp, win) {
+    function setOkButtonAction(okButton, nameField, frameRateField, durationField, checkboxes, progressBar, comp, win) {
         okButton.onClick = function() {
             var newCompName = nameField.text;
+            var newCompFrameRate = parseFloat(frameRateField.text); // Get the frame rate from the field
+            var newCompDuration = parseFloat(durationField.text); // Get the duration from the field
             if (compExists(newCompName)) {
                 alert("A composition with this name already exists. Please choose a different name.");
                 return;
             }
-            var newComp = app.project.items.addComp(newCompName, comp.width, comp.height, comp.pixelAspect, comp.duration, comp.frameRate);
+            var newComp = app.project.items.addComp(newCompName, comp.width, comp.height, comp.pixelAspect, newCompDuration, newCompFrameRate); // Use the duration when creating the new composition
             for (var i = 0; i < checkboxes.length; i++) {
                 if (checkboxes[i].checkbox.value) {
                     var layer = comp.layer(checkboxes[i].layerIndex);
@@ -117,6 +178,11 @@
                     progressBar.value++;
                 }
             }
+
+            if (selectedFile) { // If a file was selected
+                newComp.layers.add(app.project.importFile(new ImportOptions(selectedFile))); // Import the selected file into the new composition
+            }
+
             newComp.openInViewer();
             win.close();
         }
