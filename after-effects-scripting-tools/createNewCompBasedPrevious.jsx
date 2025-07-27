@@ -198,6 +198,7 @@
         return false;
     }
 
+    // test
     // Sets the action for the Cancel button
     function setCancelButtonAction(cancelButton, win) {
         cancelButton.onClick = function() {
